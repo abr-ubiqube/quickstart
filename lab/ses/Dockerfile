@@ -1,7 +1,5 @@
 FROM ubiqube/msa-api:2.1.0rc2
 
-ENV container docker
-
 RUN usermod -u 1000 ncuser
 RUN groupmod -g 1000 ncuser
 
@@ -13,3 +11,5 @@ RUN \
 	chkconfig ubi-sms off		;\
 	chkconfig ubi-webconf off ;\
 	:
+
+RUN rm -rf /opt/fmc_repository/CommandDefinition/Reference /opt/fmc_repository/CommandDefinition/.meta_Reference
