@@ -58,7 +58,8 @@ services:
       - "msa_api_logs:/opt/wildfly/logs/processLog"
   
   ses:
-    image: ubiqube/msa-api:2.1.0rc2
+    #image: ubiqube/msa-api:2.1.0rc2
+    build: ./lab/ses
     volumes:
       - "msa_entities:/opt/fmc_entities"
       - "msa_repository:/opt/fmc_repository"
