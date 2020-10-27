@@ -1,7 +1,7 @@
 FROM ubiqube/msa-api:2.1.0rc2
 
-RUN usermod -u 1000 ncuser
-RUN groupmod -g 1000 ncuser
+#RUN usermod -u 1000 ncuser
+#RUN groupmod -g 1000 ncuser
 
 RUN \
 	chkconfig ubi-base off		;\
