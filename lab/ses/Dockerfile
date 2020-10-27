@@ -2,9 +2,14 @@ FROM ubiqube/msa-api:2.1.0rc2
 
 ENV container docker
 
-RUN chkconfig --del ubi-sms
-RUN chkconfig --del ubi-webconf
-RUN chkconfig --del ubi-ztd
-RUN chkconfig --del postgresql-9.3
+RUN usermod -u 1000 ncuser
+RUN groupmod -g 1000 ncuser
 
-CMD [ "/sbin/init" ]
+RUN \
+	chkconfig ubi-base off		;\
+	chkconfig postgresql-9.3 off	;\
+	chkconfig elasticsearch off	;\
+	chkconfig kibana off		;\
+	chkconfig ubi-sms off		;\
+	chkconfig ubi-webconf off ;\
+	:
