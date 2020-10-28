@@ -60,11 +60,6 @@ services:
   ses:
     #image: ubiqube/msa-api:2.1.0rc2
     build: ./lab/ses
-    volumes:
-      - "msa_entities:/opt/fmc_entities"
-      - "msa_repository:/opt/fmc_repository"
-      - "msa_api:/opt/ubi-jentreprise/generated/conf"
-      - "rrd_repository:/opt/rrd"
     networks:
       default:
         ipv4_address: 172.20.0.66

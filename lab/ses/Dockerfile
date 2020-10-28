@@ -10,6 +10,7 @@ RUN \
 	chkconfig kibana off		;\
 	chkconfig ubi-sms off		;\
 	chkconfig ubi-webconf off ;\
+	chkconfig ubi-ztd off ;\
 	:
 
 RUN rm -rf /opt/fmc_repository/CommandDefinition/Reference /opt/fmc_repository/CommandDefinition/.meta_Reference
