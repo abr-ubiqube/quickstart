@@ -69,9 +69,6 @@ services:
       - "4443:443"
     depends_on:
       - db
-    volumes: 
-      - "msa_svn:/opt/svnroot"
-      - "msa_svn:/opt/sms/spool/routerconfigs/"
  
   msa_ui:
     depends_on:
@@ -106,9 +103,10 @@ services:
       - "rrd_repository:/opt/rrd"
       - "msa_sms_logs:/opt/sms/logs"
       - "msa_svn:/opt/svnroot"
-      - "msa_svn:/opt/sms/spool/routerconfigs/"
+      - "msa_svn:/opt/sms/spool"
     ports:
       - "69:69"
+      - "3690:3690"
 
   msa_bud:
     depends_on:
