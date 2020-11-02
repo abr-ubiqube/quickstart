@@ -14,3 +14,7 @@ RUN \
 	:
 
 RUN rm -rf /opt/fmc_repository/CommandDefinition/Reference /opt/fmc_repository/CommandDefinition/.meta_Reference
+
+
+RUN sed -i "s/\$UBI_SVN_PRIVIP/msa_sms/"  /opt/ses/templates/server_ALL/changeMngt-conf.properties 
+RUN sed -i "s/\$UBI_SVN_PRIVIP/msa_sms/"  /opt/ubi-jentreprise/resources/templates/conf/repository-conf.properties

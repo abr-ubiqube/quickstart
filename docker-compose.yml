@@ -95,7 +95,7 @@ services:
     #build: ./lab/sms
     depends_on:
       - db
-      - msa_es
+      - msa_es 
       - msa_dev
     volumes:
       - "msa_dev:/opt/devops/"
