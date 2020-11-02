@@ -69,6 +69,8 @@ services:
       - "4443:443"
     depends_on:
       - db
+    volumes: 
+      - "msa_svn:/opt/svnroot"
 
   msa_ui:
     depends_on:
@@ -80,7 +82,6 @@ services:
     - FEATURE_ALARMS=true
     - FEATURE_LICENCE=true
     - FEATURE_TOPOLOGY=true
-
 
   msa_es:
     image: ubiqube/msa2-es:037a2067826b36e646b45e5a148431346f62f3a6
@@ -103,6 +104,7 @@ services:
       - "msa_repository:/opt/fmc_repository"
       - "rrd_repository:/opt/rrd"
       - "msa_sms_logs:/opt/sms/logs"
+      - "msa_svn:/opt/svnroot"
     ports:
       - "69:69"
 
@@ -163,6 +165,7 @@ volumes:
   msa_api_logs:
   msa_sms_logs:
   msa_bud_logs:
+  msa_svn:
 
 networks:
   default:
