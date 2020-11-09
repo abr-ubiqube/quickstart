@@ -130,8 +130,6 @@ services:
     cap_add:
       - NET_ADMIN
       - sys_rawio
-    ports:
-      - "2221:22"
     devices:                     # required for dmidecode used by polld/asset
       - "/dev/mem:/dev/mem"
     networks:
@@ -146,8 +144,6 @@ services:
     cap_add:
       - NET_ADMIN
       - sys_rawio
-    ports:
-      - "2222:22"
     devices:                     # required for dmidecode used by polld/asset
       - "/dev/mem:/dev/mem"
     networks:
@@ -161,8 +157,6 @@ services:
     cap_add:
       - NET_ADMIN
       - sys_rawio
-    ports:
-      - "2223:22"
     devices:                     # required for dmidecode used by polld/asset
       - "/dev/mem:/dev/mem"
     networks:
@@ -176,14 +170,32 @@ services:
     cap_add:
       - NET_ADMIN
       - sys_rawio
-    ports:
-      - "2224:22"
     devices:                     # required for dmidecode used by polld/asset
       - "/dev/mem:/dev/mem"
     networks:
       default:
         ipv4_address: 172.20.0.104
     hostname: linux_me_4
+
+  msactivator:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      default:
+        ipv4_address: 172.20.0.100
+      lan_1:
+        ipv4_address: 172.30.0.100
+      lan_2:
+        ipv4_address: 172.40.0.100
+
+    hostname: msactivator
+
 
 volumes:
   msa_api:
@@ -203,4 +215,13 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/24
-
+  lan_1:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24    
+  lan_2:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.40.0.0/24
