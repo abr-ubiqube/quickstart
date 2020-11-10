@@ -6,7 +6,7 @@ services:
       - msa_api
       - msa_ui
       - camunda
-    image: ubiqube/msa2-front:91af847bf5da3269d6b9d5c023255d2350fe8f29
+    image: ubiqube/msa2-front:5bf5d5f8b91fd7d6702fb8ae7ddd894da3ee3f75
     ports:
       - target: 80
         published: 80
@@ -20,26 +20,26 @@ services:
         published: 514
         protocol: udp
         mode: host
+    volumes:
+        - "msa_front:/etc/nginx/ssl"
 
   camunda:
     image: camunda/camunda-bpm-platform:7.13.0
 
   db:
-    image: ubiqube/msa2-db:ba1dd3d66525b3a88532904782750e4d8a013b53
+    image: ubiqube/msa2-db:c22894a3262ec57399f222d30786f9f17f940cd4
     command: postgres -c 'max_connections=800'
     environment:
       POSTGRES_PASSWORD: my_db_password
       POSTGRES_DB: POSTGRESQL
     volumes:
       - "msa_db:/var/lib/postgresql/data"
-    ports:
-      - "5432:5432"
+
   msa_api:
-    image: ubiqube/msa2-api:4d2f79787372e8899de49d3bcf5cc4f29cd0bba1
     depends_on:
       - db
       - msa_es
-      - msa_dev
+    image: ubiqube/msa2-api:c52b5e6db1b2c2ca0ce69a5aabf448e08e4c120d
     entrypoint:
       - /opt/jboss/wildfly/bin/standalone.sh
       - -b
@@ -49,25 +49,37 @@ services:
       - -c
       - ubiqube.xml
     volumes:
+      - "msa_api:/opt/ubi-jentreprise/generated/conf"
       - "msa_entities:/opt/fmc_entities"
       - "msa_repository:/opt/fmc_repository"
-      - "msa_api:/opt/ubi-jentreprise/generated/conf"
       - "rrd_repository:/opt/rrd"
       - "msa_dev:/opt/devops/"
       - "msa_api_logs:/opt/jboss/wildfly/standalone/log"
       - "msa_api_logs:/opt/wildfly/logs/processLog"
+    networks: 
+      - default
+      - lan_1
+      - lan_2
+      - lan_3
+      - lan_4
+      - lan_5
+      - lan_6
+      - lan_7
+      - lan_8
+      - lan_9
 
   msa_ui:
     depends_on:
       - msa_api
-    image: ubiqube/msa2-ui:8b5408a6c355a9bfacfc3f88e087e68b1b4415ec
+    #image: ubiqube/msa2-ui:7a1b18286a257e38ecb271120e9d867ae1184422
+    build: msa2-ui
     environment:
     - FEATURE_ADMIN=true
     - FEATURE_CONNECTION_STATUS=true
     - FEATURE_ALARMS=true
     - FEATURE_LICENCE=true
     - FEATURE_TOPOLOGY=true
-
+    - FEATURE_MONITORING_PROFILES=true
 
   msa_es:
     image: ubiqube/msa2-es:037a2067826b36e646b45e5a148431346f62f3a6
@@ -79,7 +91,7 @@ services:
       - "msa_es:/usr/share/elasticsearch/data"
 
   msa_sms:
-    image: ubiqube/msa2-sms:341029005626557b716871a37267982239e49f3d
+    image: ubiqube/msa2-sms:6246532ddf2e50d73964226dd9e95064213cf859
     depends_on:
       - db
       - msa_es
@@ -92,11 +104,22 @@ services:
       - "msa_sms_logs:/opt/sms/logs"
     ports:
       - "69:69"
+    networks: 
+      - default
+      - lan_1
+      - lan_2
+      - lan_3
+      - lan_4
+      - lan_5
+      - lan_6
+      - lan_7
+      - lan_8
+      - lan_9
 
   msa_bud:
     depends_on:
       - db
-    image: ubiqube/msa2-bud:b23dbf64520fbddbc74ab6468bd23cf9b8ee3393
+    image: ubiqube/msa2-bud:e43613e82f13f405953fdcb7736f915eaffe523c
     volumes:
       - "msa_bud_logs:/opt/bud/logs/"
 
@@ -110,10 +133,14 @@ services:
     ports:
       - "9000:9000"
 
+  msa_kibana:
+    image: ubiqube/msa2-kibana:5634d2ada524a9dab10711637fb76c4570424501
+    ports:
+      - "5601:5601"
+
   msa_dev:
     # uncomment to use a local image for quickstart dev 
-    #build: ./lab/msa_dev
-    image: ubiqube/msa2-linuxdev:bd0f7f65b54b81f10348949bc96bfa1ec5d324fb
+    build: ./lab/msa_dev
     depends_on:
       - msa_es
     volumes:
@@ -122,7 +149,7 @@ services:
       - "msa_repository:/opt/fmc_repository"
       - "msa_api:/opt/ubi-jentreprise/generated/conf"
       - "msa_dev:/opt/devops/"
-
+      
   linux_me:
     # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
     #image: ubiqube/msa2-linuxme
@@ -149,7 +176,24 @@ services:
     networks:
       default:
         ipv4_address: 172.20.0.102
+      lan_3:
+        ipv4_address: 172.50.0.102
     hostname: linux_me_2
+  
+  linux_me_20:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      lan_3:
+        ipv4_address: 172.50.0.121
+    hostname: linux_me_20
+
   linux_me_3:
     # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
     #image: ubiqube/msa2-linuxme
@@ -162,7 +206,10 @@ services:
     networks:
       default:
         ipv4_address: 172.20.0.103
+      lan_4:
+        ipv4_address: 172.60.0.103
     hostname: linux_me_3
+
   linux_me_4:
     # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
     #image: ubiqube/msa2-linuxme
@@ -175,7 +222,158 @@ services:
     networks:
       default:
         ipv4_address: 172.20.0.104
+      lan_4:
+        ipv4_address: 172.60.0.104
     hostname: linux_me_4
+
+  linux_me_44:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      default:
+        ipv4_address: 172.20.0.105
+      lan_9:
+        ipv4_address: 172.110.0.105
+    hostname: linux_me_44
+
+  linux_me_5:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      lan_1:
+        ipv4_address: 172.30.0.101
+      lan_5:
+        ipv4_address: 172.70.0.101
+    hostname: linux_me_5
+
+  linux_me_6:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      lan_1:
+        ipv4_address: 172.30.0.102
+      lan_6:
+        ipv4_address: 172.80.0.102
+    hostname: linux_me_6
+
+
+  linux_me_7:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      lan_1:
+        ipv4_address: 172.30.0.120
+    hostname: linux_me_7
+
+  linux_me_8:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      lan_2:
+        ipv4_address: 172.40.0.120
+      lan_7:
+        ipv4_address: 172.90.0.120
+    hostname: linux_me_8
+
+  linux_me_9:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      lan_3:
+        ipv4_address: 172.50.0.120
+    hostname: linux_me_9
+
+  linux_me_10:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      lan_4:
+        ipv4_address: 172.60.0.120
+    hostname: linux_me_10
+  linux_me_11:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      lan_1:
+        ipv4_address: 172.30.0.103
+      lan_8:
+        ipv4_address: 172.100.0.103
+    hostname: linux_me_11
+
+  linux_me_13:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      lan_8:
+        ipv4_address: 172.100.0.178
+    hostname: linux_me_13
+  linux_me_12:
+    # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
+    #image: ubiqube/msa2-linuxme
+    build: ./lab/linux.me
+    cap_add:
+      - NET_ADMIN
+      - sys_rawio
+    devices:                     # required for dmidecode used by polld/asset
+      - "/dev/mem:/dev/mem"
+    networks:
+      lan_7:
+        ipv4_address: 172.90.0.121
+    hostname: linux_me_12
 
   msactivator:
     # use local image for quickstart dev => for release: make sure the chnages are ported to msa-docker and uncomment the line below
@@ -193,9 +391,11 @@ services:
         ipv4_address: 172.30.0.100
       lan_2:
         ipv4_address: 172.40.0.100
-
+      lan_3:
+        ipv4_address: 172.50.0.150
+      lan_4:
+        ipv4_address: 172.60.0.160
     hostname: msactivator
-
 
 volumes:
   msa_api:
@@ -208,6 +408,7 @@ volumes:
   msa_api_logs:
   msa_sms_logs:
   msa_bud_logs:
+  msa_front:
 
 networks:
   default:
@@ -225,3 +426,38 @@ networks:
     ipam:
       config:
         - subnet: 172.40.0.0/24
+  lan_3:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.50.0.0/24
+  lan_4:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.60.0.0/24
+  lan_5:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.70.0.0/24
+  lan_6:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.80.0.0/24
+  lan_7:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.90.0.0/24
+  lan_8:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.100.0.0/24
+  lan_9:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.110.0.0/24
