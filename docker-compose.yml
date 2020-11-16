@@ -40,6 +40,7 @@ services:
       - db
       - msa_es
     image: ubiqube/msa2-api:d3bf6e61bfea9dd662a721248ecdba00f43fcfea
+    #build: msa2-api
     entrypoint:
       - /opt/jboss/wildfly/bin/standalone.sh
       - -b
