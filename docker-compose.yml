@@ -6,7 +6,7 @@ services:
       - msa_api
       - msa_ui
       - camunda
-    image: ubiqube/msa2-front:2223568a852f8b568869206c28f0d8e851a7704c
+    image: ubiqube/msa2-front:6af1c7be92ca97f1f19df3a65b50598a3f1bc3a5
     ports:
       - target: 80
         published: 80
@@ -29,7 +29,7 @@ services:
     #volumes:
     #    - "/mnt/NASVolume/msa_front:/etc/nginx/ssl"
   db:
-    image: ubiqube/msa2-db:7ded9624984d2af7dae97518a8780ccca953e7f1
+    image: ubiqube/msa2-db:42961a9928f0f2949309965322e991e0c00b87b1
     command: postgres -c 'max_connections=800'
     environment:
       POSTGRES_PASSWORD: my_db_password
@@ -41,7 +41,7 @@ services:
     depends_on:
       - db
       - msa_es
-    image: ubiqube/msa2-api:93e9814151821dff6a1f43a9945f6149c452a58e
+    image: ubiqube/msa2-api:dcc0e4cbef14378a574e452d2305a6bc8d70bb26
     entrypoint:
       - /opt/jboss/wildfly/bin/standalone.sh
       - -b
@@ -119,7 +119,7 @@ services:
     image: camunda/camunda-bpm-platform:7.13.0
 
   msa_es:
-    image: ubiqube/msa2-es:bcdc35f42e3eb8f3a0ce2658649424031b9f98be
+    image: ubiqube/msa2-es:d9899d1f09809a40548f96211984647a8b4901fc
     environment:
       - "discovery.type=single-node"
       - "script.painless.regex.enabled=true"
@@ -138,7 +138,7 @@ services:
       - "9000:9000"
   
   msa_kibana:
-    image: ubiqube/msa2-kibana:5634d2ada524a9dab10711637fb76c4570424501
+    image: ubiqube/msa2-kibana:868fb6f9e3b5ab8a5a9a346b93b8779262d9e738
     ports:
       - "5601:5601"
     environment:
