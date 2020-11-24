@@ -399,6 +399,8 @@ services:
         ipv4_address: 172.50.0.150
       lan_4:
         ipv4_address: 172.60.0.160
+      lan_7:
+        ipv4_address: 172.90.0.190
     hostname: msactivator
 
 volumes:
