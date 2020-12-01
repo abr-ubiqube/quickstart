@@ -3,7 +3,7 @@ version: "3.8"
 
 services:
   msa_front:
-    image: ubiqube/msa2-front:5ec91fa53998e9541f8954add7bfbd8967095e93
+    image: ubiqube/msa2-front:d8f92109763bb2637f194dd2127ad9a8306dc580
     depends_on:
       - msa_api
       - msa_ui
@@ -51,7 +51,7 @@ services:
           - "node.role==manager"
 
   msa_api:
-    image: ubiqube/msa2-api:61ef1d00af7730f29e7e63627bae26cd78dbf5e1
+    image: ubiqube/msa2-api:dba749506022b2b2311ba4c5046787c547d2e8d8
     depends_on:
       - db
     deploy:
@@ -77,7 +77,7 @@ services:
       - "/mnt/NASVolume/msa_repository:/opt/fmc_repository"
 
   msa_ui:
-    image: ubiqube/msa2-ui:d4ec8b84c975fd355563aeb3b265e07c6ba30691
+    image: ubiqube/msa2-api:2549faa9e9d0d103c2a5c4791814fddb0c9f7204
     depends_on:
       - msa_api
     deploy:
@@ -93,7 +93,7 @@ services:
     - FEATURE_MONITORING_PROFILES=true
 
   msa_sms:
-    image: ubiqube/msa2-sms:b3f37e5c64369c15d1fa4db49ab3949f332a8f52
+    image: ubiqube/msa2-sms:1e05fb9cb74122cf536dff01099785476f6361ae
     depends_on:
       - db
     volumes:
@@ -107,7 +107,7 @@ services:
         max_replicas_per_node: 1
 
   msa_bud:
-    image: ubiqube/msa2-bud:945d13e90885ed894de375ffb786577767afc735
+    image: ubiqube/msa2-bud:532f54e8dd0a57a417bad1d885aa852d61b37a7c
     depends_on:
       - db
     deploy:
@@ -121,7 +121,7 @@ services:
         max_replicas_per_node: 1
 
   msa_es:
-    image: ubiqube/msa2-es:bcdc35f42e3eb8f3a0ce2658649424031b9f98be
+    image: ubiqube/msa2-es:d9899d1f09809a40548f96211984647a8b4901fc
     deploy:
       replicas: 1
       placement:
