@@ -3,7 +3,7 @@ version: "3.8"
 services:
   msa_front:
     container_name: msa_front
-    image: openmsa/openmsa:msa2-front-2.3.0GA-ef6f3bc7e5cd814c40f79fdd71e1458199201bc2
+    image: openmsa/openmsa:msa2-front-2.3.0GA-f70597cd7ca8e1cace46003615b3a1820b1ac515
     depends_on:
       - msa_api
       - msa_ui
@@ -45,7 +45,7 @@ services:
 
   msa_api:
     container_name: msa_api
-    image: openmsa/openmsa:msa2-api-2.3.0GA-46c1c05fe2374f26efc57def60c0f8e4f70a6af3
+    image: openmsa/openmsa:msa2-api-2.3.0GA-925898510583b7c4a38d9ca86532bf68cc7d5319
     depends_on:
       - db
       - msa_es
@@ -68,7 +68,7 @@ services:
 
   msa_ui:
     container_name: msa_ui
-    image: openmsa/openmsa:msa2-ui-2.3.0GA-dcd2e94c3395c3ba78004d8d76345d8fcfaaff21
+    image: openmsa/openmsa:msa2-ui-2.3.0GA-470b952ee72c30a8dccdfee31bf4368425d144bc
     depends_on:
       - msa_api
     environment:
@@ -144,7 +144,7 @@ services:
   msa_dev:
     container_name: msa_dev
     #build: ./lab/msa_dev
-    image: openmsa/openmsa:msa2-linuxdev-2.3.0GA-d49b2df4db2c85c53728864ad1f744ebfa6e9c74
+    image: openmsa/openmsa:msa2-linuxdev-2.3.0GA-73d93dc0779db3e7e22a11db6564c628d465d10e
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
       - "msa_entities:/opt/fmc_entities"
